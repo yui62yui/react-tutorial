@@ -14,14 +14,20 @@ export default function Header() {
         padding: "0 24px 0 24px",
       }}
     >
-      <h1
+      <Link
+        to="/"
         style={{
           color: "gray",
           cursor: "pointer",
         }}
       >
-        <FaHome />
-      </h1>
+        <FaHome
+          style={{
+            width: "40px",
+            height: "40px",
+          }}
+        />
+      </Link>
       <div
         style={{
           display: "flex",

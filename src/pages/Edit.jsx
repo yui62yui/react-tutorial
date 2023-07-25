@@ -1,8 +1,30 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import Header from "../common/Header";
 import Container from "../common/Container";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function Edit() {
+export default function Edit({ datas, editDataHandler }) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [selectedData] = datas.filter((data) => data.id === id);
+  // Detail.jsx와 마찬가지로 파라미터(id)와 id값이 동일한 data만 선택하는 과정
+
+  const [title, setTitle] = useState();
+  const [content, setContent] = useState();
+  const [newData, setNewData] = useState({ ...selectedData });
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      const newData = { ...selectedData, title, content };
+      setNewData(newData);
+      await editDataHandler(newData);
+      // newData를 먼저 저장하고 editDataHandler를 실행시켜 주기 위해 async, await 이용함
+      navigate("/");
+      // 수정 후 메인페이지로 이동
+    } catch (error) {}
+  };
   return (
     <Fragment>
       <Header />
@@ -21,7 +43,8 @@ export default function Edit() {
         >
           <div>
             <input
-              placeholder="제목"
+              placeholder={selectedData.title}
+              // placeholder 이용하여 기존 데이터 값이 기본값으로 보이게 함
               style={{
                 width: "100%",
                 height: "60px",
@@ -31,6 +54,9 @@ export default function Edit() {
                 padding: "8px",
                 boxSizing: "border-box",
               }}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              // input에 글자가 입력될 때마다 title이 setTitle로 인해 e.target.value(input내 글자)로 변경됨
             />
           </div>
           <div
@@ -39,7 +65,7 @@ export default function Edit() {
             }}
           >
             <textarea
-              placeholder="내용"
+              placeholder={selectedData.content}
               style={{
                 resize: "none",
                 height: "100%",
@@ -50,6 +76,8 @@ export default function Edit() {
                 padding: "12px",
                 boxSizing: "border-box",
               }}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
             />
           </div>
           <button
@@ -62,6 +90,7 @@ export default function Edit() {
               backgroundColor: "orange",
               cursor: "pointer",
             }}
+            onClick={submitHandler}
           >
             수정하기
           </button>

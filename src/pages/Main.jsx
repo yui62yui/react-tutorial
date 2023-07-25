@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Header from "../common/Header";
 import Container from "../common/Container";
 
-export default function Main() {
+export default function Main({ datas, deleteDataHandler }) {
+  // App.js에서 props로 useState의 data값을 받아옴
   const navigate = useNavigate();
   return (
     <>
@@ -32,9 +33,9 @@ export default function Main() {
             추가
           </button>
         </div>
-        {[1, 2, 3, 4].map((item) => (
+        {datas.map((data) => (
           <div
-            key={item}
+            key={data.id}
             style={{
               backgroundColor: "#EEEEEE",
               height: "100px",
@@ -46,7 +47,7 @@ export default function Main() {
           >
             <div
               onClick={() => {
-                navigate("/detail/1");
+                navigate(`/detail/${data.id}`);
               }}
               style={{
                 flex: 4,
@@ -54,7 +55,7 @@ export default function Main() {
                 cursor: "pointer",
               }}
             >
-              <h2>제목</h2>
+              <h2>{data.title}</h2>
               <p
                 style={{
                   width: "300px",
@@ -63,10 +64,7 @@ export default function Main() {
                   whiteSpace: "nowrap",
                 }}
               >
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem
-                ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum
-                dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor,
-                sit amet consectetur adipisicing elit.
+                {data.content}
               </p>
             </div>
             <div
@@ -79,11 +77,12 @@ export default function Main() {
                 gap: "12px",
               }}
             >
-              <div>작성자</div>
+              <div>{data.author}</div>
               <div>
                 <button
                   onClick={() => {
-                    navigate("/edit");
+                    navigate(`/edit/${data.id}`);
+                    // 파라미터 이용하여 id 특정하기
                   }}
                   style={{
                     border: "none",
@@ -100,6 +99,8 @@ export default function Main() {
                 <button
                   onClick={() => {
                     alert("삭제할까?");
+                    deleteDataHandler(data);
+                    navigate("/");
                   }}
                   style={{
                     border: "none",

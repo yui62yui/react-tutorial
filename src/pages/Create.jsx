@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Header from "../common/Header";
 import Container from "../common/Container";
+import { nanoid } from "nanoid";
+import { useNavigate } from "react-router-dom";
 
-export default function Create() {
+export default function Create({ createDataHandler }) {
+  const navigate = useNavigate();
+
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
   return (
     <>
       <Header />
@@ -32,6 +39,10 @@ export default function Create() {
                 padding: "8px",
                 boxSizing: "border-box",
               }}
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
             />
           </div>
           <div
@@ -51,6 +62,10 @@ export default function Create() {
                 padding: "12px",
                 boxSizing: "border-box",
               }}
+              value={content}
+              onChange={(e) => {
+                setContent(e.target.value);
+              }}
             />
           </div>
           <button
@@ -62,6 +77,20 @@ export default function Create() {
               borderRadius: "12px",
               backgroundColor: "skyblue",
               cursor: "pointer",
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              const newData = {
+                id: nanoid(),
+                title,
+                content,
+                author: "작성자",
+              };
+              // newData로 입력받은 title, content를 넣어 저장
+              createDataHandler(newData);
+              // newData를 태워서 App.js의 createDataHandler를 실행하도록 함
+              navigate("/");
+              // 추가되면 메인으로 이동
             }}
           >
             추가하기
