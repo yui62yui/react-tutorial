@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../common/Header";
 import Container from "../common/Container";
+import { Link } from "react-router-dom";
 
 export default function Signup() {
   return (
@@ -95,7 +96,8 @@ export default function Signup() {
                 회원가입하기
               </button>
             </div>
-            <div
+            <Link
+              to="/login"
               style={{
                 width: "360px",
               }}
@@ -113,7 +115,7 @@ export default function Signup() {
               >
                 로그인하러 가기
               </button>
-            </div>
+            </Link>
           </form>
         </div>
       </Container>
