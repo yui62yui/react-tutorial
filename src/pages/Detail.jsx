@@ -2,11 +2,15 @@ import React from "react";
 import Header from "../common/Header";
 import Container from "../common/Container";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteDataHandler } from "../redux/datas";
 
-export default function Detail({ datas, deleteDataHandler }) {
+export default function Detail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const datas = useSelector((state) => state.datas);
   const selectedData = datas?.find((data) => data.id === id);
   // datas중 data.id가 파라미터(id와 동일한 것)만 보여 주기 위한 필터작업
 
@@ -60,7 +64,7 @@ export default function Detail({ datas, deleteDataHandler }) {
           <button
             onClick={() => {
               alert("삭제할까?");
-              deleteDataHandler(selectedData);
+              dispatch(deleteDataHandler(selectedData));
               navigate("/");
             }}
             style={{

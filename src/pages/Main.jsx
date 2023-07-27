@@ -2,10 +2,17 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../common/Header";
 import Container from "../common/Container";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteDataHandler } from "../redux/datas";
 
-export default function Main({ datas, deleteDataHandler }) {
+export default function Main() {
   // App.js에서 props로 useState의 data값을 받아옴
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const datas = useSelector((state) => state.datas);
+  // useSelector를 통해 redux로 관리하는 datas라는 데이터를 받아옴
+
   return (
     <>
       <Header />
@@ -99,7 +106,7 @@ export default function Main({ datas, deleteDataHandler }) {
                 <button
                   onClick={() => {
                     alert("삭제할까?");
-                    deleteDataHandler(data);
+                    dispatch(deleteDataHandler(data));
                     navigate("/");
                   }}
                   style={{

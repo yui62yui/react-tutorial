@@ -4,9 +4,12 @@ import Header from "../common/Header";
 import Container from "../common/Container";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createDataHandler } from "../redux/datas";
 
-export default function Create({ createDataHandler }) {
+export default function Create() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -30,11 +33,8 @@ export default function Create({ createDataHandler }) {
               content,
               author: "작성자",
             };
-            // newData로 입력받은 title, content를 넣어 저장
-            createDataHandler(newData);
-            // newData를 태워서 App.js의 createDataHandler를 실행하도록 함
+            dispatch(createDataHandler(newData));
             navigate("/");
-            // 추가되면 메인으로 이동
             console.log("제출!");
           }}
         >
