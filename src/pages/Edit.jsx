@@ -2,29 +2,33 @@ import React, { Fragment, useState } from "react";
 import Header from "../common/Header";
 import Container from "../common/Container";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { editDataHandler } from "../redux/datas";
 
-export default function Edit({ datas, editDataHandler }) {
+export default function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const datas = useSelector((state) => state.datas);
   const selectedData = datas?.find((data) => data.id === id);
   // Detail.jsx와 마찬가지로 파라미터(id)와 id값이 동일한 data만 선택하는 과정
 
   const [title, setTitle] = useState(selectedData.title);
   const [content, setContent] = useState(selectedData.content);
-  const [newData, setNewData] = useState({ ...selectedData });
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
       const newData = { ...selectedData, title, content };
-      setNewData(newData);
-      await editDataHandler(newData);
+      // setNewData(newData);
+      await dispatch(editDataHandler(newData));
       // newData를 먼저 저장하고 editDataHandler를 실행시켜 주기 위해 async, await 이용함
       navigate("/");
       // 수정 후 메인페이지로 이동
     } catch (error) {}
   };
+
   return (
     <Fragment>
       <Header />
