@@ -7,11 +7,11 @@ export default function Edit({ datas, editDataHandler }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [selectedData] = datas.filter((data) => data.id === id);
+  const selectedData = datas?.find((data) => data.id === id);
   // Detail.jsx와 마찬가지로 파라미터(id)와 id값이 동일한 data만 선택하는 과정
 
-  const [title, setTitle] = useState();
-  const [content, setContent] = useState();
+  const [title, setTitle] = useState(selectedData.title);
+  const [content, setContent] = useState(selectedData.content);
   const [newData, setNewData] = useState({ ...selectedData });
 
   const submitHandler = async (e) => {
@@ -43,8 +43,6 @@ export default function Edit({ datas, editDataHandler }) {
         >
           <div>
             <input
-              placeholder={selectedData.title}
-              // placeholder 이용하여 기존 데이터 값이 기본값으로 보이게 함
               style={{
                 width: "100%",
                 height: "60px",
@@ -54,6 +52,7 @@ export default function Edit({ datas, editDataHandler }) {
                 padding: "8px",
                 boxSizing: "border-box",
               }}
+              // defaultValue={selectedData.title}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               // input에 글자가 입력될 때마다 title이 setTitle로 인해 e.target.value(input내 글자)로 변경됨
@@ -65,7 +64,6 @@ export default function Edit({ datas, editDataHandler }) {
             }}
           >
             <textarea
-              placeholder={selectedData.content}
               style={{
                 resize: "none",
                 height: "100%",
@@ -76,6 +74,7 @@ export default function Edit({ datas, editDataHandler }) {
                 padding: "12px",
                 boxSizing: "border-box",
               }}
+              // defaultValue={selectedData.content}
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
