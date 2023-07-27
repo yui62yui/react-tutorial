@@ -9,8 +9,6 @@ export default function Detail({ datas, deleteDataHandler }) {
 
   const selectedData = datas?.find((data) => data.id === id);
   // datas중 data.id가 파라미터(id와 동일한 것)만 보여 주기 위한 필터작업
-  // 이 녀석 filter말고 find로 바꿔보기!
-  // find는 없으면 undefined가 뜨니까 옵셔널체이닝을 쓰거나~~~~!!!! 해야함니다!!!!!!!!!
 
   return (
     <>
