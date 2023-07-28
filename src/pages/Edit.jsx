@@ -3,29 +3,26 @@ import Header from "../common/Header";
 import Container from "../common/Container";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { editDataHandler } from "../redux/datas";
+import { editDataHandler } from "../redux/posts";
 
 export default function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const datas = useSelector((state) => state.datas);
-  const selectedData = datas?.find((data) => data.id === id);
-  // Detail.jsx와 마찬가지로 파라미터(id)와 id값이 동일한 data만 선택하는 과정
+  const posts = useSelector((state) => state.posts);
+  const selectedData = posts?.find((data) => data.id === id);
 
-  const [title, setTitle] = useState(selectedData.title);
-  const [content, setContent] = useState(selectedData.content);
+  const [title, setTitle] = useState(selectedData?.title);
+  const [content, setContent] = useState(selectedData?.content);
+  // 데이터 형태가 달라지니까 || 등 사용 검색
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
+  const submitHandler = async () => {
     try {
       const newData = { ...selectedData, title, content };
-      // setNewData(newData);
       await dispatch(editDataHandler(newData));
       // newData를 먼저 저장하고 editDataHandler를 실행시켜 주기 위해 async, await 이용함
       navigate("/");
-      // 수정 후 메인페이지로 이동
     } catch (error) {}
   };
 
@@ -42,7 +39,9 @@ export default function Edit() {
           }}
           onSubmit={(e) => {
             e.preventDefault();
+            submitHandler();
             console.log("제출!");
+            // onclick이랑 합치기!!
           }}
         >
           <div>
@@ -93,7 +92,6 @@ export default function Edit() {
               backgroundColor: "orange",
               cursor: "pointer",
             }}
-            onClick={submitHandler}
           >
             수정하기
           </button>

@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import datas from "./datas";
+import posts from "./posts";
 
 const store = configureStore({
   reducer: {
-    datas: datas.reducer,
+    posts: posts.reducer,
   },
 });
 

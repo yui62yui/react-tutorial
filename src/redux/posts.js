@@ -21,8 +21,8 @@ const initialState = [
   },
 ];
 
-let datas = createSlice({
-  name: "datas",
+let posts = createSlice({
+  name: "posts",
   initialState,
   reducers: {
     createDataHandler: (state, action) => {
@@ -37,14 +37,14 @@ let datas = createSlice({
       });
     },
     deleteDataHandler: (state, action) => {
-      return state.filter((data) => data.id !== action.payload.id);
+      return state.filter((data) => data.id !== action.payload);
     },
   },
 });
 
 export const { createDataHandler, editDataHandler, deleteDataHandler } =
-  datas.actions;
+  posts.actions;
 
 // 각각의 action reducer들을 바깥으로 꺼내서 각 components에서 사용할 수 있도록 함
 
-export default datas;
+export default posts;
