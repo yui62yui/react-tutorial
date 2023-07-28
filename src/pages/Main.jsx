@@ -3,15 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Header from "../common/Header";
 import Container from "../common/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteDataHandler } from "../redux/datas";
+import { deleteDataHandler } from "../redux/posts";
 
 export default function Main() {
   // App.js에서 props로 useState의 data값을 받아옴
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const datas = useSelector((state) => state.datas);
-  // useSelector를 통해 redux로 관리하는 datas라는 데이터를 받아옴
+  const posts = useSelector((state) => state.posts);
+  // useSelector를 통해 redux로 관리하는 posts라는 데이터를 받아옴
 
   return (
     <>
@@ -40,7 +40,7 @@ export default function Main() {
             추가
           </button>
         </div>
-        {datas.map((data) => (
+        {posts.map((data) => (
           <div
             key={data.id}
             style={{
@@ -106,7 +106,7 @@ export default function Main() {
                 <button
                   onClick={() => {
                     alert("삭제할까?");
-                    dispatch(deleteDataHandler(data));
+                    dispatch(deleteDataHandler(data.id));
                     navigate("/");
                   }}
                   style={{

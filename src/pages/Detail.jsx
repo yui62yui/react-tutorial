@@ -3,16 +3,15 @@ import Header from "../common/Header";
 import Container from "../common/Container";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteDataHandler } from "../redux/datas";
+import { deleteDataHandler } from "../redux/posts";
 
 export default function Detail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const datas = useSelector((state) => state.datas);
-  const selectedData = datas?.find((data) => data.id === id);
-  // datas중 data.id가 파라미터(id와 동일한 것)만 보여 주기 위한 필터작업
+  const posts = useSelector((state) => state.posts);
+  const selectedData = posts?.find((data) => data.id === id);
 
   return (
     <>
@@ -25,7 +24,8 @@ export default function Detail() {
             padding: "12px",
           }}
         >
-          {selectedData.title}
+          {selectedData?.title}
+          {/* selectedData가 없을 때를 대비해서 optional chaining을 거는 게 좋다! */}
         </h1>
         <div
           style={{
@@ -35,7 +35,7 @@ export default function Detail() {
             padding: "12px",
           }}
         >
-          {selectedData.content}
+          {selectedData?.content}
         </div>
         <div
           style={{
@@ -46,7 +46,7 @@ export default function Detail() {
         >
           <button
             onClick={() => {
-              navigate(`/edit/${selectedData.id}`);
+              navigate(`/edit/${selectedData?.id}`);
               // 파라미터를 이용하여 edit에도 특정 id만 골라서 데이터를 불러오도록 함
             }}
             style={{
@@ -64,7 +64,7 @@ export default function Detail() {
           <button
             onClick={() => {
               alert("삭제할까?");
-              dispatch(deleteDataHandler(selectedData));
+              dispatch(deleteDataHandler(selectedData?.id));
               navigate("/");
             }}
             style={{

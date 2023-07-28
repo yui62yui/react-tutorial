@@ -5,7 +5,7 @@ import Container from "../common/Container";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { createDataHandler } from "../redux/datas";
+import { createDataHandler } from "../redux/posts";
 
 export default function Create() {
   const navigate = useNavigate();
