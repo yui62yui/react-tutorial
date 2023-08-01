@@ -4,6 +4,7 @@ import Container from "../common/Container";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteDataHandler } from "../redux/posts";
+import { auth } from "../firebase";
 
 export default function Detail() {
   const { id } = useParams();
@@ -12,6 +13,15 @@ export default function Detail() {
 
   const posts = useSelector((state) => state.posts);
   const selectedData = posts?.find((data) => data.id === id);
+
+  const deletePost = (id) => {
+    alert("정말 삭제하시겠습니까?");
+    dispatch(deleteDataHandler(id));
+  };
+
+  const loginAlert = () => {
+    alert("로그인 후 이용해 주세요");
+  };
 
   return (
     <>
@@ -46,8 +56,12 @@ export default function Detail() {
         >
           <button
             onClick={() => {
-              navigate(`/edit/${selectedData?.id}`);
-              // 파라미터를 이용하여 edit에도 특정 id만 골라서 데이터를 불러오도록 함
+              auth.currentUser !== null
+                ? auth.currentUser.email === selectedData?.author
+                  ? navigate(`/edit/${selectedData?.id}`)
+                  : // 파라미터 이용하여 id 특정하기
+                    alert("게시글 수정은 작성자만 가능합니다!")
+                : loginAlert();
             }}
             style={{
               border: "none",
@@ -63,9 +77,11 @@ export default function Detail() {
           </button>
           <button
             onClick={() => {
-              alert("삭제할까?");
-              dispatch(deleteDataHandler(selectedData?.id));
-              navigate("/");
+              auth.currentUser !== null
+                ? auth.currentUser.email === selectedData?.author
+                  ? deletePost(selectedData?.id)
+                  : alert("게시글 삭제는 작성자만 가능합니다!")
+                : loginAlert();
             }}
             style={{
               border: "none",

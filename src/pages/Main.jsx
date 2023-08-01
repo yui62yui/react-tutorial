@@ -24,9 +24,13 @@ export default function Main() {
   }, []);
   // 로그인 정보가 있을 경우 화면 첫 랜더링 시에 로그인/로그아웃 대신에 이메일과 로그아웃이 보이게 해야 되는데 이게 제대로 안 먹혀서 이렇게 하니까 됨...
 
-  const deletePost = (data) => {
+  const deletePost = (id) => {
     alert("정말 삭제하시겠습니까?");
-    dispatch(deleteDataHandler(data.id));
+    dispatch(deleteDataHandler(id));
+  };
+
+  const loginAlert = () => {
+    alert("로그인 후 이용해 주세요");
   };
 
   return (
@@ -42,9 +46,7 @@ export default function Main() {
         >
           <button
             onClick={() => {
-              auth.currentUser !== null
-                ? navigate("/create")
-                : alert("로그인 후 이용해 주세요");
+              auth.currentUser !== null ? navigate("/create") : loginAlert();
             }}
             // currentUser 정보가 있으면 추가 컴포넌트로 이동, 없으면 알림창
             style={{
@@ -107,10 +109,12 @@ export default function Main() {
               <div>
                 <button
                   onClick={() => {
-                    auth.currentUser.email === data.author
-                      ? navigate(`/edit/${data.id}`)
-                      : // 파라미터 이용하여 id 특정하기
-                        alert("게시글 수정은 작성자만 가능합니다!");
+                    auth.currentUser !== null
+                      ? auth.currentUser.email === data?.author
+                        ? navigate(`/edit/${data.id}`)
+                        : // 파라미터 이용하여 id 특정하기
+                          alert("게시글 수정은 작성자만 가능합니다!")
+                      : loginAlert();
                   }}
                   style={{
                     border: "none",
@@ -126,9 +130,11 @@ export default function Main() {
                 </button>
                 <button
                   onClick={() => {
-                    auth.currentUser.email === data.author
-                      ? deletePost(data)
-                      : alert("게시글 삭제는 작성자만 가능합니다!");
+                    auth.currentUser !== null
+                      ? auth.currentUser.email === data?.author
+                        ? deletePost(data?.id)
+                        : alert("게시글 삭제는 작성자만 가능합니다!")
+                      : loginAlert();
                   }}
                   style={{
                     border: "none",
