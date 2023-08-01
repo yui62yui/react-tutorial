@@ -6,6 +6,7 @@ import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createDataHandler } from "../redux/posts";
+import { auth } from "../firebase";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -31,7 +32,8 @@ export default function Create() {
               id: nanoid(),
               title,
               content,
-              author: "작성자",
+              author: auth.currentUser.email,
+              // user의 email 을 작성자로 등록
             };
             dispatch(createDataHandler(newData));
             navigate("/");
