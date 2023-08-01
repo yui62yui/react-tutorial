@@ -1,9 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../common/Header";
 import Container from "../common/Container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const logIn = async (e) => {
+    e.preventDefault();
+    try {
+      if (email === "") {
+        alert("이메일을 입력해 주세요");
+      } else if (password === "") {
+        alert("비밀번호를 입력해 주세요");
+      } else {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        navigate("/");
+      }
+    } catch (error) {
+      switch (error.code) {
+        case "auth/user-not-found":
+          alert("이메일 정보를 찾을 수 없습니다.");
+          break;
+        case "auth/wrong-password":
+          alert("틀린 비밀번호입니다.");
+          break;
+        default:
+          alert("로그인에 실패 하였습니다.");
+          break;
+      }
+    }
+  };
+
   return (
     <>
       <Header />
@@ -34,6 +71,10 @@ export default function Login() {
                   padding: "8px",
                   boxSizing: "border-box",
                 }}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
               />
             </div>
             <div
@@ -54,6 +95,10 @@ export default function Login() {
                   padding: "8px",
                   boxSizing: "border-box",
                 }}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
               />
             </div>
             <div
@@ -72,6 +117,7 @@ export default function Login() {
                   color: "white",
                   cursor: "pointer",
                 }}
+                onClick={logIn}
               >
                 로그인하기
               </button>
