@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../common/Header";
 import Container from "../common/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteDataHandler } from "../redux/posts";
-import { auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
 
 export default function Main() {
   // App.js에서 props로 useState의 data값을 받아옴
@@ -13,21 +10,7 @@ export default function Main() {
   const dispatch = useDispatch();
 
   const posts = useSelector((state) => state.posts);
-  // useSelector를 통해 redux로 관리하는 posts라는 데이터를 받아옴
-
-  const [loggedInUser, setLoggedInUser] = useState();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setLoggedInUser(user); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
-    });
-  }, []);
-  // 로그인 정보가 있을 경우 화면 첫 랜더링 시에 로그인/로그아웃 대신에 이메일과 로그아웃이 보이게 해야 되는데 이게 제대로 안 먹혀서 이렇게 하니까 됨...
-
-  const deletePost = (id) => {
-    alert("정말 삭제하시겠습니까?");
-    dispatch(deleteDataHandler(id));
-  };
+  const user = useSelector((state) => state.user);
 
   const loginAlert = () => {
     alert("로그인 후 이용해 주세요");
@@ -46,7 +29,10 @@ export default function Main() {
         >
           <button
             onClick={() => {
-              auth.currentUser !== null ? navigate("/create") : loginAlert();
+              if (!user.email) {
+                return loginAlert();
+              }
+              navigate("/create");
             }}
             // currentUser 정보가 있으면 추가 컴포넌트로 이동, 없으면 알림창
             style={{
@@ -109,13 +95,17 @@ export default function Main() {
               <div>
                 <button
                   onClick={() => {
-                    auth.currentUser !== null
-                      ? auth.currentUser.email === data?.author
-                        ? navigate(`/edit/${data.id}`)
-                        : // 파라미터 이용하여 id 특정하기
-                          alert("게시글 수정은 작성자만 가능합니다!")
-                      : loginAlert();
+                    if (!user.email) {
+                      return loginAlert();
+                    } else {
+                      if (user.email === data?.author) {
+                        return navigate(`/edit/${data.id}`);
+                      } else {
+                        return alert("게시글 수정은 작성자만 가능합니다!");
+                      }
+                    }
                   }}
+                  // 삼항연산자 두 번 쓰면 남이 헷갈린다. (onclick안에는 if else쓸 수 있음) => if를 두 번 주는 게 나음
                   style={{
                     border: "none",
                     padding: "8px",
@@ -130,12 +120,18 @@ export default function Main() {
                 </button>
                 <button
                   onClick={() => {
-                    auth.currentUser !== null
-                      ? auth.currentUser.email === data?.author
-                        ? deletePost(data?.id)
-                        : alert("게시글 삭제는 작성자만 가능합니다!")
-                      : loginAlert();
+                    if (!user.email) {
+                      return loginAlert();
+                    } else {
+                      if (user.email === data?.author) {
+                        alert("정말 삭제하시겠습니까?");
+                        return dispatch(deleteDataHandler(data.id));
+                      } else {
+                        return alert("게시글 삭제는 작성자만 가능합니다!");
+                      }
+                    }
                   }}
+                  // 삼항연산자 두 번 쓰면 남이 헷갈린다. (onclick안에는 if else쓸 수 있음) => if를 두 번 주는 게 나음
                   style={{
                     border: "none",
                     padding: "8px",

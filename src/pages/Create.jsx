@@ -4,9 +4,8 @@ import Header from "../common/Header";
 import Container from "../common/Container";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createDataHandler } from "../redux/posts";
-import { auth } from "../firebase";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -14,6 +13,8 @@ export default function Create() {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+
+  const user = useSelector((state) => state.user);
 
   return (
     <>
@@ -32,7 +33,7 @@ export default function Create() {
               id: nanoid(),
               title,
               content,
-              author: auth.currentUser.email,
+              author: user.email,
               // user의 email 을 작성자로 등록
             };
             dispatch(createDataHandler(newData));
