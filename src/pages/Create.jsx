@@ -1,20 +1,27 @@
 import React, { useState } from "react";
-
 import Header from "../common/Header";
 import Container from "../common/Container";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { createDataHandler } from "../redux/posts";
+import { useSelector } from "react-redux";
+import { useMutation } from "react-query";
+import axios from "axios";
 
 export default function Create() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const user = useSelector((state) => state.user);
+
+  const mutation = useMutation(async () => {
+    await axios.post("http://localhost:4000/posts", {
+      title,
+      content,
+      author: user.email,
+    });
+  });
 
   return (
     <>
@@ -29,16 +36,8 @@ export default function Create() {
           }}
           onSubmit={(e) => {
             e.preventDefault();
-            const newData = {
-              id: nanoid(),
-              title,
-              content,
-              author: user.email,
-              // user의 email 을 작성자로 등록
-            };
-            dispatch(createDataHandler(newData));
+            mutation.mutate();
             navigate("/");
-            console.log("제출!");
           }}
         >
           <div>
