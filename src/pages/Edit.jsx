@@ -2,28 +2,43 @@ import React, { Fragment, useState } from "react";
 import Header from "../common/Header";
 import Container from "../common/Container";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { editDataHandler } from "../redux/posts";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import axios from "axios";
 
 export default function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
-  const posts = useSelector((state) => state.posts);
-  const selectedData = posts?.find((data) => data.id === id);
+  const { data } = useQuery("posts", async () => {
+    const response = await axios.get("http://localhost:4000/posts");
+    return response.data;
+  });
+
+  const selectedData = data?.find((item) => item.id === Number(id));
 
   const [title, setTitle] = useState(selectedData?.title);
   const [content, setContent] = useState(selectedData?.content);
-  // 데이터 형태가 달라지니까 || 등 사용 검색
+
+  const updateMutation = useMutation(
+    async (newData) => {
+      await axios.put(`http://localhost:4000/posts/${id}`, newData);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("posts");
+        navigate(`/`);
+      },
+    }
+  );
 
   const submitHandler = async () => {
     try {
       const newData = { ...selectedData, title, content };
-      await dispatch(editDataHandler(newData));
-      // newData를 먼저 저장하고 editDataHandler를 실행시켜 주기 위해 async, await 이용함
-      navigate("/");
-    } catch (error) {}
+      await updateMutation.mutate(newData);
+    } catch (error) {
+      alert("에러발생");
+    }
   };
 
   return (
@@ -40,8 +55,6 @@ export default function Edit() {
           onSubmit={(e) => {
             e.preventDefault();
             submitHandler();
-            console.log("제출!");
-            // onclick이랑 합치기!!
           }}
         >
           <div>
@@ -55,10 +68,8 @@ export default function Edit() {
                 padding: "8px",
                 boxSizing: "border-box",
               }}
-              // defaultValue={selectedData.title}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              // input에 글자가 입력될 때마다 title이 setTitle로 인해 e.target.value(input내 글자)로 변경됨
             />
           </div>
           <div

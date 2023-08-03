@@ -24,6 +24,7 @@ export default function Login() {
           email,
           password
         );
+        // dispatch(nowUser(userCredential.user));
         navigate("/");
       }
     } catch (error) {

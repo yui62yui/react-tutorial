@@ -7,6 +7,7 @@ import { auth } from "../firebase";
 
 export default function Signup() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [checkPassword, setCheckPassword] = useState("");
@@ -24,10 +25,14 @@ export default function Signup() {
       } else if (password !== checkPassword) {
         alert("비밀번호가 일치하지 않습니다. 다시 입력해 주세요");
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const newUser = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        // dispatch(nowUser({ email: newUser.user }));
+        // App.js 에 onAuth... 를 사용했기에 dispatch가 필요없어짐.
         alert("로그인이 완료되었습니다!");
-        setEmail("");
-        setPassword("");
         navigate("/");
       }
     } catch (error) {

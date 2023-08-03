@@ -1,15 +1,14 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
 import { auth } from "../firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import { nowUser } from "../redux/user";
 
 export default function Header() {
-  const navigate = useNavigate();
-  const logOut = async () => {
-    await auth.signOut();
-    navigate("/");
-    alert("로그아웃하였습니다.");
-  };
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   return (
     <header
@@ -35,7 +34,29 @@ export default function Header() {
           }}
         />
       </Link>
-      {auth.currentUser === null ? (
+      {user.email ? (
+        <div
+          style={{
+            display: "flex",
+            gap: "12px",
+            alignItems: "center",
+          }}
+        >
+          <p>{user.email}</p>
+          <button
+            style={{
+              height: "30px",
+            }}
+            onClick={async () => {
+              await signOut(auth);
+              dispatch(nowUser({ email: null }));
+              alert("로그아웃 되었습니다!");
+            }}
+          >
+            로그아웃
+          </button>
+        </div>
+      ) : (
         <div
           style={{
             display: "flex",
@@ -44,24 +65,6 @@ export default function Header() {
         >
           <Link to="/login">로그인</Link>
           <Link to="/signup">회원가입</Link>
-        </div>
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            alignItems: "center",
-          }}
-        >
-          <p>{auth.currentUser.email}</p>
-          <button
-            style={{
-              height: "30px",
-            }}
-            onClick={logOut}
-          >
-            로그아웃
-          </button>
         </div>
       )}
     </header>

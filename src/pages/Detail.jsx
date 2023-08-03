@@ -2,26 +2,49 @@ import React from "react";
 import Header from "../common/Header";
 import Container from "../common/Container";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteDataHandler } from "../redux/posts";
-import { auth } from "../firebase";
+import { useSelector } from "react-redux";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import axios from "axios";
 
 export default function Detail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
-  const posts = useSelector((state) => state.posts);
-  const selectedData = posts?.find((data) => data.id === id);
-
-  const deletePost = (id) => {
-    alert("정말 삭제하시겠습니까?");
-    dispatch(deleteDataHandler(id));
-  };
+  const user = useSelector((state) => state.user);
 
   const loginAlert = () => {
     alert("로그인 후 이용해 주세요");
   };
+
+  const { data, isLoading, isError, error } = useQuery("posts", async () => {
+    const response = await axios.get("http://localhost:4000/posts");
+    return response.data;
+  });
+
+  const deleteMutation = useMutation(
+    (id) => {
+      return axios.delete(`http://localhost:4000/posts/${id}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("posts");
+        navigate(`/`);
+      },
+    }
+  );
+
+  const selectedData = data.find((item) => {
+    return item?.id === Number(id);
+  });
+
+  if (isLoading) {
+    return <div>데이터 가져오는 중임</div>;
+  }
+
+  if (isError) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <>
@@ -35,7 +58,7 @@ export default function Detail() {
           }}
         >
           {selectedData?.title}
-          {/* selectedData가 없을 때를 대비해서 optional chaining을 거는 게 좋다! */}
+          {/* data가 없을 때를 대비해서 optional chaining을 거는 게 좋다! */}
         </h1>
         <div
           style={{
@@ -56,12 +79,15 @@ export default function Detail() {
         >
           <button
             onClick={() => {
-              auth.currentUser !== null
-                ? auth.currentUser.email === selectedData?.author
-                  ? navigate(`/edit/${selectedData?.id}`)
-                  : // 파라미터 이용하여 id 특정하기
-                    alert("게시글 수정은 작성자만 가능합니다!")
-                : loginAlert();
+              if (!user.email) {
+                return loginAlert();
+              } else {
+                if (user.email === selectedData?.author) {
+                  return navigate(`/edit/${selectedData.id}`);
+                } else {
+                  return alert("게시글 수정은 작성자만 가능합니다!");
+                }
+              }
             }}
             style={{
               border: "none",
@@ -76,12 +102,18 @@ export default function Detail() {
             수정
           </button>
           <button
-            onClick={() => {
-              auth.currentUser !== null
-                ? auth.currentUser.email === selectedData?.author
-                  ? deletePost(selectedData?.id)
-                  : alert("게시글 삭제는 작성자만 가능합니다!")
-                : loginAlert();
+            onClick={async () => {
+              if (!user.email) {
+                return loginAlert();
+              } else {
+                if (user.email === selectedData?.author) {
+                  alert("정말 삭제하시겠습니까?");
+                  await deleteMutation.mutate(selectedData.id);
+                  return navigate("/");
+                } else {
+                  return alert("게시글 삭제는 작성자만 가능합니다!");
+                }
+              }
             }}
             style={{
               border: "none",

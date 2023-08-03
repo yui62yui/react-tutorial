@@ -18,7 +18,8 @@
 .env.development.local
 .env.test.local
 .env.production.local
-.env.*
+# .env.*
+# 다 막을 필요는 없음(sample이 있을 경우가 있으니까)
 
 npm-debug.log*
 yarn-debug.log*
