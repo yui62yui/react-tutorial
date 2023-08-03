@@ -2,9 +2,21 @@
   "posts": [
     {
       "id": 1,
-      "title": "제목예시",
-      "content": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
-      "author": "abc@naver.com"
+      "title": "이것은 제목입니다1",
+      "content": "이것은 내용인뎁쇼1",
+      "author": "111@naver.com"
+    },
+    {
+      "id": 2,
+      "title": "이것은 제목입니다2",
+      "content": "이것은 내용인뎁쇼2",
+      "author": "222@naver.com"
+    },
+    {
+      "id": 3,
+      "title": "이것은 제목입니다3",
+      "content": "이것은 내용인뎁쇼3",
+      "author": "333@naver.com"
     }
   ]
 }
